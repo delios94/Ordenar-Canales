@@ -571,9 +571,10 @@ function ordJuego(a, b, reverse) {
 }
 
 function viewsToNum(v) {//convierte el texto de los viewers a numero
-    let txt = v.getElementsByClassName('tw-c-text-alt')[1].innerText.replace(/\./g, "");
-    if (txt.includes("K")) {//mil views
-        txt = txt.replace("K", "") + "000";
+    let txt = v.getElementsByClassName('tw-c-text-alt')[1].innerText.replace(/\./g, "").replace(/,/g, "");
+    if (txt.includes("K") || txt.includes("mil")) {//mil views
+        let nuevo = txt.replace("K", "").replace("mil", "").trim();
+        txt = nuevo + "000";
     }
     let ord = txt * 1;
     return ord;
