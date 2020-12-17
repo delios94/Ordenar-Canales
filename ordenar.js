@@ -4,7 +4,6 @@ let channel_info = document.getElementsByClassName('channel-info-content')[0];
 var only_favs = false;
 var ordenCookie = getCookie("ordenado");
 var favsCookie = getCookie("favoritos");
-var ordenando = false;
 
 let followed_text = "CANALES QUE SIGO";
 
@@ -22,28 +21,16 @@ let svg_opcion_za = '<svg width="100%" height="100%" version="1.1" viewBox="0 0 
 window.addEventListener("load", () => {//al cargar la pagina
     try {
         setTimeout(function () {
+            addFavBtnObserver();
             addFavBtn();
         }, 3000);
+
+        refrescar();
 
         if (sideNav) {
             content = sideNav.getElementsByClassName("simplebar-content")[0];
             if (content) {
                 addSelect();
-
-                let grup = sideNav.getElementsByClassName('tw-transition-group')[0];
-                if (grup) {
-                    //TODO listener si twitch cambia el orden de la lista o la actualiza
-
-                    // var observer = new MutationObserver(function (mutations) {
-                    //     mutations.forEach(function (mutation) {
-                    //         reOrdenar();
-                    //     });
-                    // });
-
-                    // var config = { attributes: true, childList: true, characterData: true };
-
-                    // observer.observe(grup, config);
-                }
 
                 if (ordenCookie != "") {
                     let orden = ordenCookie.split("|");
@@ -107,10 +94,53 @@ function mouseListener() {
 }
 //#endregion
 
-function reOrdenar() {//TODO reordenar despues de que twitch cambie el orden
-    if (!ordenando) {
-        console.log("test");
+function refrescar() {
+    let rand = (5000 + Math.round(Math.random() * 2000)) * 60;//random entre 5 y 7 min
+    setTimeout(function () {
+        reOrdenar();
+        refrescar();
+    }, rand);
+}
+
+function reOrdenar() {
+    let tipo = "menos";
+    let ordenCookie = getCookie("ordenado");
+    if (ordenCookie != "") {
+        let orden = ordenCookie.split("|");
+        if (orden) {
+            tipo = orden[0];
+        }
     }
+
+    ordenar(tipo);
+}
+
+function updateFavBtn() {
+    let fav_btn = document.getElementById("fav_btn");
+    if (fav_btn) {
+        let canal = getCanal();
+        favsCookie = getCookie("favoritos");
+        let svg = fav_btn.getElementsByTagName("svg")[0];
+        if (svg) {
+            if (favsCookie.includes(canal)) {
+                svg.innerHTML = svg_is_fav;
+            } else {
+                svg.innerHTML = svg_no_fav;
+            }
+        }
+    }
+}
+
+function addFavBtnObserver() {
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            updateFavBtn();
+        });
+    });
+
+    var config = { attributes: true, childList: true, characterData: true };
+
+    observer.observe(document.body, config);
 }
 
 function addFavBtn() {
@@ -133,7 +163,7 @@ function addFavBtn() {
             if (items) {
                 let fav_btn_div = document.createElement("div");
                 let html = `<div id="fav_btn" class="tw-border-radius-medium tw-c-background-base tw-inline-flex tw-overflow-hidden">
-                            <button style="z-index: 1;" class="tw-align-items-center tw-align-middle tw-border-bottom-left-radius-medium tw-border-bottom-right-radius-medium tw-border-top-left-radius-medium tw-border-top-right-radius-medium tw-core-button tw-core-button--secondary tw-full-width tw-inline-flex tw-interactive tw-justify-content-center tw-overflow-hidden tw-relative">
+                            <button style="z-index: 1;" title="Ordenar solo los favoritos" class="tw-align-items-center tw-align-middle tw-border-bottom-left-radius-medium tw-border-bottom-right-radius-medium tw-border-top-left-radius-medium tw-border-top-right-radius-medium tw-core-button tw-core-button--secondary tw-full-width tw-inline-flex tw-interactive tw-justify-content-center tw-overflow-hidden tw-relative">
                                 <div class="tw-align-items-center tw-core-button-label tw-flex tw-flex-grow-0">
                                     <div class="tw-flex-grow-0">
                                         <div class="tw-align-items-center tw-flex tw-justify-content-center">
@@ -457,7 +487,6 @@ function ordenar(tipo) {
 
     removeFavList();
     favsCookie = getCookie("favoritos");
-    ordenando = true;
 
     let toSort = Array.prototype.slice.call(grup.children, 0);
 
@@ -498,10 +527,6 @@ function ordenar(tipo) {
         if (!fav_list_added && !isFav(newChild)) {
             fav_list_added = true;
             addFavList(newChild);
-        }
-
-        if (i == l - 1) {
-            ordenando = false;
         }
     }
 }
