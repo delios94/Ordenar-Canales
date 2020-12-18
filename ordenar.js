@@ -273,7 +273,7 @@ function addSelect() {
         //boton filtrar favs
         html += `<div class="filtro_favs" style="display: inline-block; vertical-align: middle; margin-left: 9px;"><div style="max-width: 40px;"><div id="" class="tw-border-radius-medium tw-c-background-base tw-inline-flex tw-overflow-hidden"> <button style="z-index: 1;" class="tw-align-items-center tw-align-middle tw-border-bottom-left-radius-medium tw-border-bottom-right-radius-medium tw-border-top-left-radius-medium tw-border-top-right-radius-medium tw-core-button tw-core-button--secondary tw-full-width tw-inline-flex tw-interactive tw-justify-content-center tw-overflow-hidden tw-relative"> <div class="tw-align-items-center tw-core-button-label tw-flex tw-flex-grow-0"> <div class="tw-flex-grow-0"> <div class="tw-align-items-center tw-flex tw-justify-content-center"> <div class="tw-align-items-center tw-flex tw-justify-content-center tw-mg-r-0"> <div class="tw-animation tw-animation--bounce-in tw-animation--duration-long tw-animation--fill-mode-both tw-animation--timing-ease"> <div class="tw-align-items-center tw-flex tw-justify-content-center"> <figure class="ScFigure-sc-1j5mt50-0 laJGEQ tw-svg"><svg width="100%" height="100%" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="ScIconSVG-sc-1bgeryd-1 cMQeyU"> ${svg} </svg></figure> </div> </div> </div> </div> </div> </div> </button> </div></div></div>`;
         //desplegable
-        html += `<div id="balloon-hide" style="display: none; margin: -7px 0 0 10px;" class="tw-absolute tw-balloon tw-balloon--auto tw-balloon--down tw-balloon--left">
+        html += `<div id="balloon-hide" style="display: none; margin: -7px 0 0 10px;z-index: 1;" class="tw-absolute tw-balloon tw-balloon--auto tw-balloon--down tw-balloon--left">
                     <div class="tw-border-radius-large tw-c-background-base tw-c-text-inherit tw-elevation-2">
                         <div class="tw-flex tw-flex-column">
                             <div class="tw-overflow-auto tw-pd-1">
@@ -607,8 +607,8 @@ function viewsToNum(v) {//convierte el texto de los viewers a numero
 
 function descarta(a, b) {//descarta ordenar si no existe, si está offline o modo solo favs
     if (!a || !b) return 0;
-    if (!a.innerHTML.includes("tw-channel-status-indicator--live")) return 1;
-    if (!b.innerHTML.includes("tw-channel-status-indicator--live")) return -1;
+    if (!a.innerHTML.includes("tw-channel-status-indicator")) return 1;
+    if (!b.innerHTML.includes("tw-channel-status-indicator")) return -1;
 
     if (only_favs) {
         if (!isFav(a)) return 1;
